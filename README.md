@@ -54,3 +54,5 @@ Set up your GitHub webhook URL to point to your tunnel URL:
 ## Testing
 
 Create a pull request in your repository and check the service logs to verify the webhook is working correctly.
+https://pr-doc-bot.loca.lt/stats with pretty print shows recently processed PRs and total in queue
+
