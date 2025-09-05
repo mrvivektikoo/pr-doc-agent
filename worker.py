@@ -177,25 +177,39 @@ PR CHANGES (git diff):
 {diff_content}
 ```
 
+CRITICAL: Only suggest README updates if the PR changes DIRECTLY make existing README content inaccurate, outdated, or incorrect. Be conservative - it is BETTER to suggest NO changes than to suggest unnecessary improvements.
+
 Analyze the changes and respond with a JSON object containing:
-1. "should_update": boolean - true if README needs updating
+1. "should_update": boolean - true ONLY if the PR makes README content factually incorrect
 2. "reasoning": string - brief explanation of your decision
 3. "specific_updates": array of objects, each containing:
-   - "section": string - which README section needs updating (e.g., "Installation", "Usage", "API Reference")
-   - "current_content": string - the current content that should be changed
-   - "suggested_content": string - the new content that should replace it
-   - "reason": string - why this specific change is needed
+   - "section": string - which README section is now incorrect due to the PR
+   - "current_content": string - the current content that is now wrong/outdated
+   - "suggested_content": string - the corrected content
+   - "reason": string - how the PR specifically makes this content incorrect
 4. "priority": string - "high", "medium", or "low" based on impact to users
 
-Consider these factors:
-- New features that users need to know about
-- Changed APIs or usage patterns  
-- New dependencies or requirements
-- Installation or setup changes
-- Breaking changes
-- New endpoints or configuration options
+ONLY suggest changes if the PR:
+- Adds/removes dependencies that are mentioned in installation instructions
+- Changes APIs, endpoints, or method signatures documented in the README
+- Modifies configuration files, environment variables, or setup steps in the README
+- Introduces breaking changes that invalidate existing usage examples
+- Changes command-line interfaces or scripts mentioned in the README
 
-If should_update is false, set specific_updates to an empty array.
+DO NOT suggest changes for:
+- General style improvements or formatting
+- Adding documentation for internal code changes
+- Improvements that would be "nice to have" but aren't required
+- Changes to code that isn't user-facing or documented in the README
+- Refactoring that doesn't change public interfaces
+
+If the PR doesn't directly invalidate any existing README content, set should_update to false and specific_updates to an empty array.
+
+VALIDATION LOGIC:
+- If you determine a change "does not impact" or "does not affect" the README, then should_update MUST be false
+- Never suggest identical content (if current_content equals suggested_content, don't suggest it)
+- If you can't identify specific incorrect content that needs correction, should_update MUST be false
+- Your reasoning and your should_update decision must be logically consistent
 
 IMPORTANT: 
 - Respond ONLY with valid JSON
@@ -206,7 +220,7 @@ IMPORTANT:
 """
 
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model="gpt-4o-mini",  # Better reasoning, more cost-effective than gpt-4
             messages=[
                 {
                     "role": "system", 
