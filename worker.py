@@ -169,12 +169,12 @@ REPOSITORY: {repo_name}
 
 CURRENT README:
 ```
-{readme_content[:3000]}
+{readme_content}
 ```
 
 PR CHANGES (git diff):
 ```
-{diff_content[:2000]}
+{diff_content}
 ```
 
 Analyze the changes and respond with a JSON object containing:
@@ -214,7 +214,7 @@ IMPORTANT:
                 },
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=800,
+            max_tokens=1500,  # Increased to handle full README + diff analysis
             temperature=0.1
         )
         
